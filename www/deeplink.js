@@ -1,3 +1,4 @@
+cordova.define("ionic-plugin-deeplinks.deeplink", function(require, exports, module) {
 
 var argscheck = require('cordova/argscheck'),
     utils = require('cordova/utils'),
@@ -37,11 +38,17 @@ var IonicDeeplink = {
     this.paths = paths;
 
     this.onDeepLink(function(data) {
-      console.log('On deep link', data);
-      var realPath, pathData, matchedParams, args, finalArgs, didRoute;
+        console.log('On deep link', data);
+        var realPath, pathData, matchedParams, args, finalArgs, didRoute;
 
-      realPath = self._getRealPath(data);
-      args = self._queryToObject(data.url)
+        realPath = self._getRealPath(data);
+        args = self._queryToObject(data.url);
+        
+        // Added by Grafia
+        if(data.path != "") {
+          realPath = data.host + realPath;
+        }
+        if(realPath.charAt(0) != '/') realPath = '/' + realPath;
 
       for(var targetPath in paths) {
         pathData = paths[targetPath];
@@ -115,7 +122,8 @@ var IonicDeeplink = {
   routeMatch: function(route, path) {
     var parts = path.split('/');
     var routeParts = route.split('/');
-
+console.log(parts);
+      console.log(routeParts);
     // Our aggregated route params that matched our route path.
     // This is used for things like /post/:id
     var routeParams = {};
@@ -213,3 +221,5 @@ var IonicDeeplink = {
 };
 
 module.exports = IonicDeeplink;
+
+});
